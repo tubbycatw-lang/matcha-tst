@@ -7,15 +7,24 @@ local UIS = game:GetService("UserInputService")
 local SelectedFolder = nil
 local CycleKeybind = Enum.KeyCode.X
 
-local ESP_URL = "https://raw.githubusercontent.com/artxficial/matchastuff/main/esp_utility.lua"
-local successESP, ImportESP = pcall(function() return loadstring(game:HttpGet(ESP_URL))() end)
+local ImportESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/artxficial/matchastuff/main/esp_utility.lua"))()
 
-local Anim_URL = "https://raw.githubusercontent.com/artxficial/matchastuff/main/animationtracker.lua"
-local successAnim, ImportAnimationTracker = pcall(function() return loadstring(game:HttpGet(Anim_URL))() end)
+local ImportAnimationTracker = loadstring(game:HttpGet("https://raw.githubusercontent.com/artxficial/matchastuff/main/animationtracker.lua"))()
 
-local UI_URL = "https://raw.githubusercontent.com/neaxusxgod-png/INS-ui/main/uilib.min.lua"
-local successUI, UI_Library = pcall(function() return loadstring(game:HttpGet(UI_URL))() end)
-UI_Library = UI_Library or INSui
+-- Load UI library: it may return itself OR set a global called INSui
+local UI_Library
+local _uiLoaded, _uiResult = pcall(function()
+    return loadstring(game:HttpGet("https://raw.githubusercontent.com/neaxusxgod-png/INS-ui/main/uilib.min.lua"))()
+end)
+if _uiLoaded then
+    UI_Library = _uiResult -- returned directly
+end
+if not UI_Library then
+    UI_Library = rawget(_G, "INSui") -- set as global by the library
+end
+if not UI_Library then
+    warn("[matchastuff] UI_Library failed to load!")
+end
 
 local AnimationsLoggedCache = {}
 local AnimationsLoggedOrder = {}
